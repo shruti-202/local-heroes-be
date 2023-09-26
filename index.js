@@ -23,4 +23,4 @@ app.use("/health",healthRoutes)
 /**
  * LISTEN
  */
-app.listen(process.env.APP_PORT,()=>console.log(`APP IS LISTENING ON PORT:${process.env.App_PORT}`))
+app.listen(process.env.APP_PORT,()=>console.log(`APP IS LISTENING ON PORT:${process.env.APP_PORT}`))
