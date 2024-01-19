@@ -32,7 +32,80 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-const updateProviderAvailability = async (req, res) => {};
+const updateProviderAvailability = async (req, res) => {
+  const { daysType, startDate, endDate, startTime, endTime } = req.body;
+
+  let startDateObj = null;
+  let endDateObj = null;
+
+  if (daysType === "DATE_RANGE") {
+    if (!startDate || startDate.length === 0 || startDate === undefined) {
+      console.log("testing3");
+      return res.status(400).json({
+        statusCode: 400,
+        message: "Please select Start Date",
+      });
+    }
+    if (!endDate || endDate.length === 0 || endDate === undefined) {
+      return res.status(400).json({
+        statusCode: 400,
+        message: "Please select End Date",
+      });
+    }
+    startDateObj = new Date(startDate);
+    endDateObj = new Date(endDate);
+
+    if (startDateObj >= endDateObj) {
+      return res.status(400).json({
+        statusCode: 400,
+        message: "Invalid Request: start date should be less than end date",
+      });
+    }
+  } else if (daysType === "ALL_DAYS") {
+  } else {
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Please select Day Type",
+    });
+  }
+
+  if (!startTime || startTime.length === 0 || startTime === undefined || startTime === "Invalid Date") {
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Please select Start Time",
+    });
+  }
+  if (!endTime || endTime.length === 0 || endTime === undefined || endTime === "Invalid Date") {
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Please select End Time",
+    });
+  }
+  if (startTime > endTime) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Invalid Request: start time should be less than end time",
+    });
+  }
+  try {
+    const userDoc = await Users.findOne({ _id: req.user._id });
+    userDoc.availability.daysType = daysType;
+    userDoc.availability.startDate = daysType === "ALL_DAYS" ? null : startDate;
+    userDoc.availability.endDate = daysType === "ALL_DAYS" ? null : endDate;
+    userDoc.availability.startTime = startTime;
+    userDoc.availability.endTime = endTime;
+    userDoc.save();
+  } catch (err) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Something went wrong!!!",
+    });
+  }
+  return res.status(200).json({
+    statusCode: 200,
+    message: "User availability updated!!!",
+  });
+};
 
 const addProviderService = async (req, res) => {
   const { serviceType, serviceDetails } = req.body;
@@ -93,14 +166,15 @@ const addProviderService = async (req, res) => {
   if (!descriptionValidator(description)) {
     return res.status(400).json({
       statusCode: 400,
-      message: "Invalid Description Format. Start with a capital letter"
+      message:
+        "Invalid Description Format: Start with uppercase, followed by optional uppercase or lowercase or number, and words separated by spaces.",
     });
   }
- 
-  if (serviceType.length === 0) {
+
+  if (!serviceType) {
     return res.status(400).json({
       statusCode: 400,
-      message: "Invalid service type",
+      message: "Invalid Service Type",
     });
   }
   try {
@@ -113,16 +187,16 @@ const addProviderService = async (req, res) => {
     };
     userDoc.services.push(newService);
     userDoc.save();
+    return res.status(200).json({
+      statusCode: 200,
+      message: "Service Added Successfully",
+    });
   } catch (err) {
     return res.status(400).json({
       statusCode: 400,
       message: "Something went wrong!!!",
     });
   }
-  return res.status(200).json({
-    statusCode: 200,
-    message: "Service Added Successfully",
-  });
 };
 
-module.exports = { authenticateToken, updateProviderAvailability, addProviderService };
+module.exports = { authenticateToken, updateProviderAvailability,addProviderService };

@@ -29,21 +29,25 @@ const UserSchema = new mongoose.Schema(
     },
 
     availability: {
+      daysType: {
+        type: String,
+        required: false
+      },
       startDate: {
         type: String,
-        require: false,
+        required: false,
       },
       endDate: {
         type: String,
-        require: false
+        required: false
     },
     startTime: {
         type: String,
-        require: false
+        required: false
     },
     endTime: {
         type: String,
-        require: false
+        required: false
     },
     },
 

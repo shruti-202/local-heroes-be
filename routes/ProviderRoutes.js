@@ -3,7 +3,7 @@ const { authenticateToken, updateProviderAvailability, addProviderService } = re
 const router = express.Router();
 
 
-router.put("/availability", updateProviderAvailability)
+router.put("/availability", authenticateToken, updateProviderAvailability)
 router.post("/service", authenticateToken, addProviderService)
 
 
