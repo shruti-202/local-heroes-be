@@ -20,20 +20,18 @@ const passwordValidator = (password) => {
 };
 
 const titleValidator = (title) => {
-    const titleRegex = /^[A-Z][a-z]*(?: [A-Z][a-z]*)*$/;
-    return titleRegex.test(title);
-  };
-  
+  const titleRegex = /^[A-Z][a-z]*(?: [A-Za-z][a-z]*)*$/;
+  return titleRegex.test(title);
+};
+
 const descriptionValidator = (description) => {
-  const descriptionRegex = /^[A-Z][a-z]*(?: [A-Z][a-z]*(?: [0-9]+)?)*$/;
+  const descriptionRegex = /^[A-Z][a-z]*(?: [A-Za-z0-9][a-z0-9]*)*$/;
   return descriptionRegex.test(description);
 };
 
-module.exports = {
-  nameValidator,
-  emailValidator,
-  usernameValidator,
-  titleValidator,
-  passwordValidator,
-  descriptionValidator,
+const pinCodeValidator = (pinCode) => {
+  const pinCodeRegex = /^[1-9][0-9]{5}$/;
+  return pinCodeRegex.match(pinCode);
 };
+
+module.exports = { nameValidator, emailValidator, usernameValidator, titleValidator, passwordValidator, descriptionValidator,pinCodeValidator };
