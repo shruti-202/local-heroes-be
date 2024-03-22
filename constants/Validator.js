@@ -20,13 +20,21 @@ const passwordValidator = (password) => {
 };
 
 const titleValidator = (title) => {
-  const titleRegex = /^[A-Z][a-z]*(?: [A-Za-z][a-z]*)*$/;
+  const gibberishRegex = /(.)\1{2,}/; 
+  if (gibberishRegex.test(title)) {
+    return false; 
+  }
+  const titleRegex = /^(?:[A-Z][a-z]*|[A-Z]+)(?:\s(?:[A-Z][a-z]*|[A-Z]+|[a-z]+))*$/
   return titleRegex.test(title);
 };
 
 const descriptionValidator = (description) => {
-  const descriptionRegex = /^[A-Z][a-z]*(?: [A-Za-z0-9][a-z0-9]*)*$/;
-  return descriptionRegex.test(description);
+  const gibberishRegex = /(.)\1{3,}/; 
+  if (gibberishRegex.test(description)) {
+    return false; 
+  }
+  const descriptionRegex = /^(?:[A-Z][a-z]*|[A-Z]+)(?:\s(?:[A-Z][a-z]*|[A-Z]+|[a-z]+|\d+))*$/
+  return /\b[A-Z][a-z]*\b/.test(description) && descriptionRegex.test(description);
 };
 
 const pinCodeValidator = (pinCode) => {
