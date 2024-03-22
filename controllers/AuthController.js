@@ -2,7 +2,7 @@ const UserModel = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const salt = bcrypt.genSaltSync(10);
-const { nameValidator, emailValidator, usernameValidator, passwordValidator,  } = require("../constants/validator");
+const { nameValidator, emailValidator, usernameValidator, passwordValidator,  } = require("../constants/Validator");
 
 const userTypes = ["PROVIDER", "CLIENT"];
 
