@@ -1,5 +1,6 @@
-const { titleValidator, descriptionValidator } = require("../constants/validator");
+const { titleValidator, descriptionValidator } = require("../constants/Validator");
 const Users = require("../models/UserModel");
+const Booking = require("../models/BookingModel");
 const jwt = require("jsonwebtoken");
 
 const authenticateToken = async (req, res, next) => {
@@ -28,6 +29,63 @@ const authenticateToken = async (req, res, next) => {
     return res.status(400).json({
       statusCode: 400,
       message: "Invalid Token",
+    });
+  }
+};
+
+const getProviderRequests = async (req, res) => {
+  let query = { providerId: req.user._id };
+
+  if (req.query.status && req.query.status !== "ALL") {
+    query.status = req.query.status;
+  }
+
+  try {
+    const bookings = await Booking.find(query).populate("clientId", [
+      "name",
+      "phone",
+    ]);
+
+    const bookingsWithServiceDetail = bookings.map((booking) => {
+      const service = req.user.services.find(
+        (service) =>
+          service._id.toString() === booking.providerServiceId.toString()
+      );
+      return {
+        ...booking.toObject(),
+        serviceName: service.title,
+        servicePrice: service.price,
+      };
+    });
+    console.log("bookings", bookings);
+    return res.status(200).json({
+      data: bookingsWithServiceDetail,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Something went wrong",
+    });
+  }
+};
+
+const updateProviderRequest = async (req, res) => {
+  const { bookingIdToUpdate, status } = req.body;
+
+  try {
+    const bookingDoc = await Booking.findById(bookingIdToUpdate);
+    bookingDoc.status = status;
+    const updatedBooking = await bookingDoc.save();
+    return res.status(200).json({
+      statusCode: 200,
+      data: updatedBooking,
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Something went wrong",
     });
   }
 };
@@ -69,13 +127,23 @@ const updateProviderAvailability = async (req, res) => {
     });
   }
 
-  if (!startTime || startTime.length === 0 || startTime === undefined || startTime === "Invalid Date") {
+  if (
+    !startTime ||
+    startTime.length === 0 ||
+    startTime === undefined ||
+    startTime === "Invalid Date"
+  ) {
     return res.status(400).json({
       statusCode: 400,
       message: "Please select Start Time",
     });
   }
-  if (!endTime || endTime.length === 0 || endTime === undefined || endTime === "Invalid Date") {
+  if (
+    !endTime ||
+    endTime.length === 0 ||
+    endTime === undefined ||
+    endTime === "Invalid Date"
+  ) {
     return res.status(400).json({
       statusCode: 400,
       message: "Please select End Time",
@@ -109,7 +177,10 @@ const updateProviderAvailability = async (req, res) => {
 
 const addProviderService = async (req, res) => {
   const { serviceType, serviceDetails } = req.body;
-  const { title, price, description } = serviceDetails;
+  let { title, price, description } = serviceDetails;
+
+  title = title.trim();
+  description = description.trim();
 
   if (!serviceType) {
     return res.status(400).json({
@@ -136,7 +207,7 @@ const addProviderService = async (req, res) => {
     return res.status(400).json({
       statusCode: 400,
       message:
-        "Invalid Title Format: Start with uppercase followed by lowercase & contains only alphabetical characters.",
+        "Invalid Title Format: Start with uppercase followed by either all uppercase/lowercase & Title cannot contain gibberish/special characters",
     });
   }
   if (!price) {
@@ -145,10 +216,10 @@ const addProviderService = async (req, res) => {
       message: "Please enter the Price",
     });
   }
-  if (price <= 1 || price > 5000) {
+  if (price <= 9 || price > 5000) {
     return res.status(400).json({
       statusCode: 400,
-      message: "Price should be more than 1 & less than 5000 Rs",
+      message: "Price should be more than 10 & less than 5000 Rs",
     });
   }
   if (!description) {
@@ -199,4 +270,4 @@ const addProviderService = async (req, res) => {
   }
 };
 
-module.exports = { authenticateToken, updateProviderAvailability,addProviderService };
+module.exports = { authenticateToken, updateProviderAvailability, addProviderService, getProviderRequests, updateProviderRequest };
