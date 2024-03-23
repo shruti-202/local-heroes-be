@@ -128,10 +128,24 @@ const registerUser = async (req, res) => {
 const loginUser = async (req, res) => {
   const { username, password } = req.body;
 
+  if(!username) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Please enter Username"
+    });
+  }
+
   if (!usernameValidator(username)) {
     return res.status(400).json({
       statusCode: 400,
       message: "Invalid username! It should have only a-z A-Z 0-9 _ characters and should have 8-30 characters"
+    });
+  }
+
+  if (!password) {
+    return res.status(400).json({
+      statusCode: 400,
+      message: "Please enter Password"
     });
   }
   if (!passwordValidator(password)) {
