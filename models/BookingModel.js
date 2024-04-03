@@ -22,9 +22,34 @@ const BookingSchema = new mongoose.Schema({
         required: [true, "Empty UserType"]
     },
     clientAddress: {
-        type: String,
-        required: true
+        type: {
+            addressLineOne: {
+                type: String,
+                required: true
+            },
+            addressLineTwo: String,
+            state: {
+                type: String,
+                required: true
+            },
+            city: {
+                type: String,
+                required: true
+            },
+            pinCode: {
+                type: String,
+                required: true,
+                validate: {
+                    validator: function(v) {
+                        return /^\d{6}$/.test(v); // Validate pinCode format (6 digits)
+                    },
+                    message: props => `${props.value} is not a valid pin code!`
+                }
+            }
+        },
+        required: false,
     },
+      
     date: {
         type: String,
         required: false

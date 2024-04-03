@@ -39,7 +39,7 @@ const descriptionValidator = (description) => {
 
 const pinCodeValidator = (pinCode) => {
   const pinCodeRegex = /^[1-9][0-9]{5}$/;
-  return pinCodeRegex.match(pinCode);
+  return pinCodeRegex.test(pinCode);
 };
 
 module.exports = { nameValidator, emailValidator, usernameValidator, titleValidator, passwordValidator, descriptionValidator,pinCodeValidator };
