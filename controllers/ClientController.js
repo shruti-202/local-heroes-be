@@ -1,7 +1,7 @@
 const Users = require("../models/UserModel");
 const Booking = require("../models/BookingModel");
 const jwt = require("jsonwebtoken");
-const { pinCodeValidator } = require("../constants/Validator");
+const { pinCodeValidator, addressValidator, stateValidator, cityValidator } = require("../constants/Validator");
 
 const getProvidersByCategory = async (req, res) => {
   const category = req.query.category;
@@ -113,6 +113,7 @@ const createBooking = async (req, res) => {
       message: "Invalid Request: Start Time should be less than End Time",
     });
   }
+
   if (typeof clientAddress === "object") {
     const { addressLineOne, state, city, pinCode } = clientAddress;
     if (!addressLineOne) {
@@ -129,6 +130,7 @@ const createBooking = async (req, res) => {
           "Invalid Request: Address line one should be more than 5 characters",
       });
     }
+
     if (addressLineOne.length > 50) {
       return res.status(400).json({
         statusCode: 400,
@@ -136,12 +138,22 @@ const createBooking = async (req, res) => {
           "Invalid Request: Address line one should be less than 50 characters",
       });
     }
+
+    if (!addressValidator(addressLineOne)) {
+      return res.status(400).json({
+        statusCode: 400,
+        message:
+          "Invalid Address Format: Start with uppercase followed by either all uppercase/lowercase & cannot contain gibberish/special characters",
+      });
+    }
+
     if (!state) {
       return res.status(400).json({
         statusCode: 400,
         message: "Invalid Request: State is required",
       });
     }
+
     if (state.length < 2 || state.length > 20) {
       return res.status(400).json({
         statusCode: 400,
@@ -149,12 +161,22 @@ const createBooking = async (req, res) => {
           "Invalid Request: State should be more than 2 & less than 20 characters",
       });
     }
+
+    if (!stateValidator(state)) {
+      return res.status(400).json({
+        statusCode: 400,
+        message:
+          "Invalid State Format: Start with uppercase followed by either all uppercase/lowercase & cannot contain digits/gibberish/special characters",
+      });
+    }
+
     if (!city) {
       return res.status(400).json({
         statusCode: 400,
         message: "Invalid Request: City is required",
       });
     }
+
     if (city.length < 2 || city.length > 20) {
       return res.status(400).json({
         statusCode: 400,
@@ -162,12 +184,22 @@ const createBooking = async (req, res) => {
           "Invalid Request: City should be more than 2 & less than 20 characters",
       });
     }
+
+    if (!cityValidator(city)) {
+      return res.status(400).json({
+        statusCode: 400,
+        message:
+          "Invalid City Format: Start with uppercase followed by either all uppercase/lowercase & cannot contain digits/gibberish/special characters",
+      });
+    }
+
     if (!pinCode) {
       return res.status(400).json({
         statusCode: 400,
         message: "Invalid Request: Pincode is required",
       });
     }
+
     if (!pinCodeValidator(pinCode)) {
       return res.status(400).json({
         statusCode: 400,

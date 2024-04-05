@@ -42,4 +42,32 @@ const pinCodeValidator = (pinCode) => {
   return pinCodeRegex.test(pinCode);
 };
 
-module.exports = { nameValidator, emailValidator, usernameValidator, titleValidator, passwordValidator, descriptionValidator,pinCodeValidator };
+const addressValidator = (addressLineOne) => {
+  const gibberishRegex = /(.)\1{2,}/; 
+  if (gibberishRegex.test(addressLineOne)) {
+    return false; 
+  }
+  const addressValidator  = /^(?:[A-Z][a-z]*|[A-Z]+)(?:\s(?:[A-Z][a-z]*|[A-Z]+|[a-z]+|\d+))*$/
+  return addressValidator.test(addressLineOne);
+};
+
+const stateValidator = (state) => {
+  const gibberishRegex = /(.)\1{2,}/; 
+  if (gibberishRegex.test(state)) {
+    return false; 
+  }
+  const stateValidator  =  /^(?:[A-Z][a-z]*|[A-Z]+)(?:\s(?:[A-Z][a-z]*|[A-Z]+|[a-z]+))*$/
+  return stateValidator.test(state);
+};
+
+const cityValidator = (city) => {
+  const gibberishRegex = /(.)\1{2,}/; 
+  if (gibberishRegex.test(city)) {
+    return false; 
+  }
+  const cityValidator =  /^(?:[A-Z][a-z]*|[A-Z]+)(?:\s(?:[A-Z][a-z]*|[A-Z]+|[a-z]+))*$/
+  return cityValidator.test(city);
+};
+
+
+module.exports = { nameValidator, emailValidator, usernameValidator, titleValidator, passwordValidator, descriptionValidator, pinCodeValidator, addressValidator, stateValidator, cityValidator    };
