@@ -160,7 +160,7 @@ const loginUser = async (req, res) => {
     if (!userDoc) {
       return res.status(400).json({
         statusCode: 400,
-        message: "Username Does not Exists"
+        message: "Oops! we couldn't find that Username. Consider signing up if you're new."
       });
     }
     const isPasswordCorrect = await bcrypt.compare(password, userDoc.password);
