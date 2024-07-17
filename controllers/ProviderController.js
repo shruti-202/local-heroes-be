@@ -57,7 +57,6 @@ const getProviderRequests = async (req, res) => {
         servicePrice: service.price,
       };
     });
-    console.log("bookings", bookings);
     return res.status(200).json({
       data: bookingsWithServiceDetail,
     });
@@ -98,7 +97,6 @@ const updateProviderAvailability = async (req, res) => {
 
   if (daysType === "DATE_RANGE") {
     if (!startDate || startDate.length === 0 || startDate === undefined) {
-      console.log("testing3");
       return res.status(400).json({
         statusCode: 400,
         message: "Please select Start Date",
